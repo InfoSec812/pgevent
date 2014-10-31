@@ -17,13 +17,9 @@
 package org.apache.camel.pgevent;
 
 import com.impossibl.postgres.jdbc.PGDataSource;
-import javax.sql.DataSource;
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.component.timer.TimerComponent;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.main.Main;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,7 +49,7 @@ public class IntegrationTest {
         main.enableHangupSupport();
         main.bind("test", ds);
         main.addRouteBuilder(buildConsumer());
-        main.addRouteBuilder(buildProducer());
+//        main.addRouteBuilder(buildProducer());
     }
 
     RouteBuilder buildConsumer() {

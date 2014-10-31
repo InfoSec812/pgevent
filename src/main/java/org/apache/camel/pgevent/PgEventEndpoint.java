@@ -182,8 +182,8 @@ public class PgEventEndpoint extends DefaultEndpoint {
         validateInputs();
         dbConnection = initJdbc();
         PgEventConsumer consumer = new PgEventConsumer(this, processor);
-        dbConnection.addNotificationListener(consumer);
         dbConnection.createStatement().execute("LISTEN "+this.getChannel());
+        dbConnection.addNotificationListener(channel, channel, consumer);
         return consumer;
     }
 
