@@ -29,13 +29,13 @@ ignored. The *channel* parameter, however, is always required.
 
 ## URI Format
 
-    pgevent:[datasource] || [//dbHost:dbPort]/<database>/<channel>[?parameters]
+    pgevent:[datasource] || [//host:port]/<database>/<channel>[?parameters]
     
     pgevent:myDataSource/proddb/userupdates
     
-    pgevent://192.168.1.12:5432/proddb/groupupdates?pgUser=username&pgPass=secret
+    pgevent://192.168.1.12:5432/proddb/groupupdates?user=username&pass=secret
     
-    pgevent://192.168.1.12/proddb/groupupdates?pgUser=username&pgPass=secret
+    pgevent://192.168.1.12/proddb/groupupdates?user=username&pass=secret
     
     pgevent:///proddb/customerupdates   ## Uses all defaults
 

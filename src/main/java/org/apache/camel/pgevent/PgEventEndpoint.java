@@ -3,8 +3,10 @@ package org.apache.camel.pgevent;
 import com.impossibl.postgres.api.jdbc.PGConnection;
 import com.impossibl.postgres.jdbc.PGDataSource;
 import java.io.InvalidClassException;
+import java.net.URISyntaxException;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 import javax.naming.directory.InvalidAttributesException;
 import javax.sql.DataSource;
 import org.apache.camel.Consumer;
@@ -13,18 +15,22 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a PgEvent endpoint.
  */
 @UriEndpoint(scheme = "pgevent")
 public class PgEventEndpoint extends DefaultEndpoint {
+    private static final Logger LOG = LoggerFactory.getLogger(PgEventEndpoint.class);
 
     private static final String FORMAT1 = 
         "^pgevent://([^:]*):(\\d+?)/(\\w+?)/(\\w+?).*$";
     
     private static final String FORMAT2 =
-        "^pgevent://([^:]*)/(\\w+?)/(\\w+?).*$";
+        "^pgevent://([^:]+?)/(\\w+?)/(\\w+?).*$";
     
     private static final String FORMAT3 =
         "^pgevent:///(\\w+?)/(\\w+?).*$";
@@ -57,18 +63,17 @@ public class PgEventEndpoint extends DefaultEndpoint {
 
     private PGConnection dbConnection;
 
-    public final PGConnection initJdbc() throws ClassNotFoundException, SQLException {
+    public final PGConnection initJdbc() throws Exception {
         PGConnection conn;
+        Properties props = new Properties();
+        props.putAll(URISupport.parseQuery(uri));
         if (this.getDatasource()!=null) {
             conn = (PGConnection)this.getDatasource().getConnection();
         } else {
-            System.setProperty("pgjdbc.test.user", this.getUser());
-            System.setProperty("pgjdbc.test.password", this.getPass());
-            
             Class.forName("com.impossibl.postgres.jdbc.PGDriver");
             conn = (PGConnection)DriverManager.getConnection(
                 "jdbc:pgsql://"+this.getHost()+":"+this.getPort()+"/"+
-                this.getDatabase());
+                this.getDatabase(), this.getUser(), this.getPass());
         }
         return conn;
     }
@@ -103,7 +108,9 @@ public class PgEventEndpoint extends DefaultEndpoint {
      * @throws InvalidAttributesException if there is an error in the parameters
      */
     protected final void parseUri() throws InvalidAttributesException {
+        LOG.info("URI: "+uri);
         if (uri.matches(FORMAT1)) {
+            LOG.info("FORMAT1");
             String[] parts = uri
                                 .replaceFirst(FORMAT1, "$1:$2:$3:$4")
                                 .split(":");
@@ -112,6 +119,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
             database = parts[2];
             channel = parts[3];
         } else if (uri.matches(FORMAT2)) {
+            LOG.info("FORMAT2");
             String[] parts = uri
                                 .replaceFirst(FORMAT2, "$1:$2:$3")
                                 .split(":");
@@ -120,6 +128,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
             database = parts[1];
             channel = parts[2];
         } else if (uri.matches(FORMAT3)) {
+            LOG.info("FORMAT3");
             String[] parts = uri
                                 .replaceFirst(FORMAT3, "$1:$2")
                                 .split(":");
@@ -128,6 +137,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
             database = parts[0];
             channel = parts[1];
         } else if (uri.matches(FORMAT4)) {
+            LOG.info("FORMAT4");
             String[] parts = uri
                                 .replaceFirst(FORMAT4, "$1:$2")
                                 .split(":");
@@ -151,6 +161,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
                     "not set when creating this Endpoint (channel)");
         }
         if (datasource!=null) {
+            LOG.info("******Datasource detected*****");
             if (!PGDataSource.class.isInstance(datasource)) {
                 throw new InvalidClassException("The datasource passed to the "+
                     "pgevent component is NOT a PGDataSource class from the"+
