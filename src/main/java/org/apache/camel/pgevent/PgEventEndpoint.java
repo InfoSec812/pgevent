@@ -154,6 +154,10 @@ public class PgEventEndpoint extends DefaultEndpoint {
     }
 
     private void validateInputs() throws InvalidClassException, InvalidParameterException {
+        if (channel==null || channel.length()==0) {
+            throw new InvalidParameterException("A required parameter was "+
+                    "not set when creating this Endpoint (channel)");
+        }
         if (pgDataSource!=null) {
             if (!PGDataSource.class.isInstance(pgDataSource)) {
                 throw new InvalidClassException("The datasource passed to the "+
@@ -162,16 +166,17 @@ public class PgEventEndpoint extends DefaultEndpoint {
                     "https://github.com/impossibl/pgjdbc-ng");
             }
         } else {
-            if (pgUser==null || channel==null) { 
+            if (pgUser==null) { 
                 throw new InvalidParameterException("A required parameter was "+
-                    "not set when creating this Endpoint (pgUser, "+
-                    "pgDataSource, or channel)");
+                    "not set when creating this Endpoint (pgUser or "+
+                    "pgDataSource)");
             }
         }
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        validateInputs();
         return new PgEventConsumer(this, processor);
     }
 
