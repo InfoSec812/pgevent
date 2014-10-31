@@ -62,7 +62,7 @@ public class PgEventProducer extends DefaultAsyncProducer {
             if (dbConnection.isClosed()) {
                 dbConnection = endpoint.initJdbc();
             }
-        } catch (ClassNotFoundException|SQLException e) {
+        } catch (Exception e) {
             throw new InvalidStateException("Database connection closed "+
                 "and could not be re-opened.", e);
         }
@@ -70,7 +70,7 @@ public class PgEventProducer extends DefaultAsyncProducer {
         boolean retVal;
         try {
             dbConnection.createStatement().execute("NOTIFY "+
-                endpoint.getChannel()+" '"+
+                endpoint.getChannel()+", '"+
                 exchange.getOut().getBody(String.class)+
                 "'");
             retVal = true;
