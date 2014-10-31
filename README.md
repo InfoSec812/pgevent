@@ -10,19 +10,19 @@ added since PostgreSQL 8.3.
 You can configure this component via URI parameters like most other Camel 
 components. The possible parameters are listed below:
 
-    String pgHost = "localhost";
+    String host = "localhost";
     
-    Integer pgPort = 5432;
+    Integer port = 5432;
     
-    String pgDatabase;
+    String database;
     
     String channel;
     
-    String pgUser = "postgres";
+    String user = "postgres";
     
-    String pgPass;
+    String pass;
     
-    DataSource pgDataSource;
+    DataSource datasource;
 
 If you use the pgDataSource parameter, all other *connection* parameters are 
 ignored. The *channel* parameter, however, is always required.
@@ -34,6 +34,8 @@ ignored. The *channel* parameter, however, is always required.
     pgevent:myDataSource/proddb/userupdates
     
     pgevent://192.168.1.12:5432/proddb/groupupdates?pgUser=username&pgPass=secret
+    
+    pgevent://192.168.1.12/proddb/groupupdates?pgUser=username&pgPass=secret
     
     pgevent:///proddb/customerupdates   ## Uses all defaults
 
