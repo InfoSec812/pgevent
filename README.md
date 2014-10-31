@@ -1,4 +1,4 @@
-Camel Component Project
+PgEvent Component Project
 =======================
 
 This is a component for [Apache Camel](http://camel.apache.org/) which allows
