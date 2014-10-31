@@ -1,7 +1,10 @@
 package org.apache.camel.pgevent;
 
+import com.impossibl.postgres.api.jdbc.PGConnection;
 import com.impossibl.postgres.jdbc.PGDataSource;
 import java.io.InvalidClassException;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import javax.naming.directory.InvalidAttributesException;
 import javax.sql.DataSource;
 import org.apache.camel.Consumer;
@@ -51,6 +54,29 @@ public class PgEventEndpoint extends DefaultEndpoint {
     private DataSource datasource;
 
     private final String uri;
+
+    private PGConnection dbConnection;
+
+    public final PGConnection initJdbc() throws ClassNotFoundException, SQLException {
+        PGConnection conn;
+        if (this.getDatasource()!=null) {
+            conn = (PGConnection)this.getDatasource().getConnection();
+        } else {
+            System.setProperty("pgjdbc.test.user", this.getUser());
+            System.setProperty("pgjdbc.test.password", this.getPass());
+            
+            Class.forName("com.impossibl.postgres.jdbc.PGDriver");
+            conn = (PGConnection)DriverManager.getConnection(
+                "jdbc:pgsql://"+this.getHost()+":"+this.getPort()+"/"+
+                this.getDatabase());
+        }
+        return conn;
+    }
+
+    @Override
+    protected String createEndpointUri() {
+        return "pgevent";
+    }
 
     public PgEventEndpoint(String uri, PgEventComponent component) throws InvalidAttributesException {
         super(uri, component);
@@ -143,7 +169,10 @@ public class PgEventEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         validateInputs();
-        return new PgEventConsumer(this, processor);
+        dbConnection = initJdbc();
+        PgEventConsumer consumer = new PgEventConsumer(this, processor);
+        dbConnection.addNotificationListener(consumer);
+        return consumer;
     }
 
     @Override
