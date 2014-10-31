@@ -1,5 +1,5 @@
-PgEvent Component Project
-=======================
+PgEvent Component 
+=================
 
 This is a component for [Apache Camel](http://camel.apache.org/) which allows
 for Producing/Consuming PostgreSQL events related to the LISTEN/NOTIFY commands
