@@ -5,7 +5,7 @@ This is a component for [Apache Camel](http://camel.apache.org/) which allows
 for Producing/Consuming PostgreSQL events related to the LISTEN/NOTIFY commands
 added since PostgreSQL 8.3.
 
-== Usage (Not yet working) ==
+## Usage (Not yet working)
 
 You can configure this component via URI parameters like most other Camel 
 components. The possible parameters are listed below:
@@ -27,7 +27,7 @@ components. The possible parameters are listed below:
 If you use the datasource parameter, all other *connection* parameters are 
 ignored. The *channel* parameter, however, is always required.
 
-== Building And Installing ==
+## Building And Installing
 
 To build this project use
 
