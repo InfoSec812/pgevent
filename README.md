@@ -24,8 +24,19 @@ components. The possible parameters are listed below:
     
     DataSource pgDataSource;
 
-If you use the datasource parameter, all other *connection* parameters are 
+If you use the pgDataSource parameter, all other *connection* parameters are 
 ignored. The *channel* parameter, however, is always required.
+
+## URI Format
+
+    pgevent:[datasource] || [//dbHost:dbPort]/<database>/<channel>[?parameters]
+    
+    pgevent:myDataSource/proddb/userupdates
+    
+    pgevent://192.168.1.12:5432/proddb/groupupdates?pgUser=username&pgPass=secret
+    
+    pgevent:///proddb/customerupdates   ## Uses all defaults
+
 
 ## Building And Installing
 

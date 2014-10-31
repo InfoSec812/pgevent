@@ -136,8 +136,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
         this.pgDataSource = pgDataSource;
     }
 
-    public PgEventEndpoint() {
-    }
+    
 
     public PgEventEndpoint(String uri, PgEventComponent component) {
         super(uri, component);
